@@ -1,0 +1,54 @@
+{
+  "name": "ExampleCfxRnTodo",
+  "version": "0.0.0",
+  "description": "example-cfx-rn-todo",
+  "main": [
+    "index.android.js",
+    "index.ios.js"
+  ],
+  "watch": {
+    "build": {
+      "patterns": "src",
+      "extensions": "coffee"
+    }
+  },
+  "scripts": {
+    "test": "./test/index.coffee",
+    "clean:rn": "./npm.sh clean:rn",
+    "clean:prj": "./npm.sh clean:prj",
+    "install": "./npm.sh install",
+    "reinstall": "./npm.sh reinstall",
+    "build": "./npm.sh build",
+    "rebuild": "./npm.sh rebuild",
+    "watch": "npm run clean:prj; npm-watch",
+    "start": "./npm.sh start",
+    "update": "./npm.sh update"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/react-cfx/example-cfx-rn-todo.git"
+  },
+  "keywords": [
+    "cfx"
+  ],
+  "author": "FooTearth <footearth@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/react-cfx/example-cfx-rn-todo/issues"
+  },
+  "homepage": "https://github.com/react-cfx/example-cfx-rn-todo#readme",
+  "devDependencies": {
+    "ddeyes": "^0.0.1",
+    "npm-watch": "^0.1.4",
+    "shelljs": "^0.6.0"
+  },
+  "dependencies": {
+    "cfx.redux": "git+https://github.com/react-cfx/cfx.redux.git",
+    "cfx.redux-saga": "git+https://github.com/react-cfx/cfx.redux-saga.git",
+    "cfx.rn": "git+https://github.com/react-cfx/cfx.rn.git",
+    "coffee-script": "^1.10.0",
+    "react": "^0.14.8",
+    "react-native": "^0.23.1",
+    "redux-logger": "^2.6.1"
+  }
+}
