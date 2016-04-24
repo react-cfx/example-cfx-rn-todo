@@ -16,11 +16,6 @@ styles = Styl
     paddingTop: 30
     paddingBottom: 10
     flexDirection: 'row'
-  button:
-    width: 50
-  text:
-    color: '#fff'
-    textAlign: 'center'
   title:
     flex: 1
     color: '#fff'
@@ -31,13 +26,5 @@ module.exports = cfx ->
 
   View style: styles.toolbar
   ,
-    Text style: styles.button
-  ,
     Text style: styles.title
     , "Todos"
-  ,
-    TouchableOpacity
-      style: styles.button
-    ,
-      Text style: styles.text
-      , 'Add'

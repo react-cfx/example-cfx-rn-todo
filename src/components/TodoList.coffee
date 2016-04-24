@@ -1,3 +1,4 @@
+echo = -> console.log arguments
 {
   RN
   cfx
@@ -13,26 +14,35 @@
 } = Comps
 
 CompleteToggle = require './CompleteToggle'
+AddTodo = require './AddTodo'
 
 styles = Styl
   container:
     flex: 1
-    alignItems: 'center'
-    justifyContent: 'center'
+    # alignItems: 'center'
+    # justifyContent: 'center'
   row:
     flexDirection: 'row'
     paddingTop: 20
     paddingBottom: 20
     paddingLeft: 20
     paddingRight: 20
-  templateRow:
+  viewRow:
+    flexDirection: 'row'
+    alignItems: 'center'
+  addTodo:
     paddingLeft: 30
   text:
     flex: 1
     fontSize: 16
     marginLeft: 10
 
-module.exports = cfx
+module.exports = cfx do ->
+
+  getTodosWithTemplate = (todos) ->
+    todos.concat [
+      addTodo: true
+    ]
 
   constructor: ->
 
@@ -58,22 +68,25 @@ module.exports = cfx
       rowHasChanged: (r1, r2) -> r1 isnt r2
 
     @state =
-      dataSource: ds.cloneWithRows todos
+      dataSource: ds.cloneWithRows getTodosWithTemplate todos
 
     return
+
+  componentWillReceiveProps: (nextProps) ->
+    unless nextProps.todos is @props.todos
+      @setState
+        dataSource: @state.dataSource.cloneWithRows(
+          @getTodosWithTemplate nextProps.todos
+        )
 
   renderTodoItem: (todo) ->
 
     TouchableHighlight
+      style: styles.row
       underlayColor: "#e4f2d9"
       key: todo.id
-      style: styles.row
     ,
-      View
-        style:
-          flexDirection: 'row'
-          flex: 1
-          alignItems: 'center'
+      View style: styles.viewRow
       ,
         CompleteToggle
           style: styles.toggle
@@ -83,9 +96,13 @@ module.exports = cfx
         , todo.text
 
   renderRow: (todo) ->
-    @renderTodoItem todo
+    if todo.addTodo
+      AddTodo()
+    else
+      @renderTodoItem todo
 
   render: ->
     ListView
+      style: styles.container
       dataSource: @state.dataSource
       renderRow: @renderRow

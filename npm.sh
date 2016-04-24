@@ -122,7 +122,7 @@ function main {
       start
       ;;
 
-    update: )
+    update )
       update
       ;;
 

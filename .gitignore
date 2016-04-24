@@ -37,6 +37,7 @@ android
 ios
 .flowconfig
 .watchmanconfig
+.buckconfig
 
 build
 dist

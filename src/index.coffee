@@ -1,9 +1,6 @@
 { Comp } = require 'cfx.rn'
 
-App = require './App/TodoApp'
-# App = require './components/TitleBar'
-# App = require './components/TodoList'
-# App = require './components/Filters'
+App = require './App/index'
 
 Comp.reg 'ExampleCfxRnTodo'
 , -> App

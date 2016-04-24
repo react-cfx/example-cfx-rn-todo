@@ -44,7 +44,9 @@
   },
   "dependencies": {
     "cfx.redux": "git+https://github.com/react-cfx/cfx.redux.git",
+    "cfx.redux-actions": "git+https://github.com/react-cfx/cfx.redux-actions.git",
     "cfx.redux-saga": "git+https://github.com/react-cfx/cfx.redux-saga.git",
+    "cfx.redux-types": "git+https://github.com/react-cfx/cfx.redux-types.git",
     "cfx.rn": "git+https://github.com/react-cfx/cfx.rn.git",
     "coffee-script": "^1.10.0",
     "react": "^0.14.8",

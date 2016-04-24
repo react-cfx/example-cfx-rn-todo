@@ -6,26 +6,21 @@ echo = -> console.log arguments
 } = require 'cfx.rn'
 
 { createStore } = require 'cfx.redux'
-{ createSagaMiddleware } = require 'cfx.redux-saga'
 
-{
-  reducers
-  sagas
-} = require 'cfx.example-cfx-redux-counter'
+reducers = require '../reducers/Visibility'
 
 createLogger = require 'redux-logger'
 
 store = createStore
-  countApp: reducers
+  todoApp: reducers
 , [
   createLogger()
-  createSagaMiddleware sagas
 ]
 
-CounterApp = require './CounterApp'
+TodoApp = require './TodoApp'
 
 module.exports = cfx ->
 
   Provider { store }
   ,
-    CounterApp()
+    TodoApp()
