@@ -5,6 +5,7 @@ echo = -> console.log arguments
   cfx
   Styl
   Comps
+  connect
 } = require 'cfx.rn'
 
 {
@@ -12,6 +13,8 @@ echo = -> console.log arguments
   View
   Text
 } = Comps
+
+{ setVisibilityFilter } = require '../actions/Visibility'
 
 styles = Styl
   bar:
@@ -29,18 +32,42 @@ styles = Styl
   current:
     backgroundColor: '#70a743'
 
-module.exports = cfx
+stateToLocalState = (state) ->
+  switch state
+    when 'SHOW_TODO_ALL'
+    then 'ALL'
+    when 'SHOW_TODO_INACTIVE'
+    then 'COMPLETED'
+    when 'SHOW_TODO_ACTIVE'
+    then 'INCOMPLETE'
 
-  constructor: ->
+localStateToState = (state) ->
+  switch state
+    when 'ALL'
+    then 'SHOW_TODO_ALL'
+    when 'COMPLETED'
+    then 'SHOW_TODO_INACTIVE'
+    when 'INCOMPLETE'
+    then 'SHOW_TODO_ACTIVE'
+
+VisibilityFilter = cfx
+
+  constructor: (props, state) ->
 
     @state =
-      activeFilter: 'ALL'
+      activeFilter: stateToLocalState state
 
     @
 
-  render: ->
+  componentWillReceiveProps: (nextProps) ->
+    @setState
+      activeFilter: stateToLocalState nextProps.state
 
-    state = @state
+  render: (props, state) ->
+
+    selfState = @state
+
+    { setVisibilityFilter } = props.actions
 
     renderFilters = [
       'ALL'
@@ -49,7 +76,7 @@ module.exports = cfx
     ].reduce (result, filter, index, array) ->
 
       buttonStyle =
-        if state.activeFilter is filter
+        if selfState.activeFilter is filter
         then [
           styles.button
           styles.current
@@ -58,7 +85,10 @@ module.exports = cfx
 
       result.push(
 
-        TouchableOpacity style: buttonStyle
+        TouchableOpacity
+          style: buttonStyle
+          onPress: ->
+            setVisibilityFilter localStateToState filter
         ,
           Text style: styles.text
           , filter
@@ -74,3 +104,10 @@ module.exports = cfx
       renderFilters.unshift
         style: styles.bar
       renderFilters
+
+module.exports = connect(
+  (state) ->
+    state.todoApp.VisibilityFilter
+  { setVisibilityFilter }
+  VisibilityFilter
+)

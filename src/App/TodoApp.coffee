@@ -5,14 +5,10 @@ echo = -> console.log arguments
   cfxify
   Styl
   Comps
-  connect
 } = require 'cfx.rn'
 {
   View
 } = Comps
-
-actions =
-  Visibility: require '../actions/Visibility'
 
 TitleBar = require '../components/TitleBar'
 TodoList = require '../components/TodoList'
@@ -32,7 +28,7 @@ styles = Styl
   add:
     flex: 1
 
-todoApp = cfx ->
+module.exports = cfx ->
 
   View style: styles.container
   ,
@@ -41,7 +37,3 @@ todoApp = cfx ->
     TodoList style: styles.list
   ,
     Filters style: styles.filters
-
-module.exports = connect 'todoApp'
-, actions.Visibility
-, todoApp

@@ -7,7 +7,7 @@ echo = -> console.log arguments
 
 { createStore } = require 'cfx.redux'
 
-reducers = require '../reducers/Visibility'
+reducers = require '../reducers/index'
 
 createLogger = require 'redux-logger'
 

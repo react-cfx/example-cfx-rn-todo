@@ -4,6 +4,7 @@ echo = -> console.log arguments
   cfx
   Styl
   Comps
+  connect
 } = require 'cfx.rn'
 {
   View
@@ -37,32 +38,16 @@ styles = Styl
     fontSize: 16
     marginLeft: 10
 
-module.exports = cfx do ->
+TodoList = cfx do ->
 
   getTodosWithTemplate = (todos) ->
     todos.concat [
       addTodo: true
     ]
 
-  constructor: ->
+  constructor: (props, state) ->
 
-    todos = [
-        id: 'cin89hdq400005e392v1cm1rp'
-        text: 'Learn about actions'
-        completed: false
-      ,
-        id: 'cin89hdr400015e39wgk31nq9'
-        text: 'Learn about reducers'
-        completed: true
-      ,
-        id: 'cin89hdrl00025e393jdh18vy'
-        text: 'Learn about redux'
-        completed: false
-      ,
-        id: 'cin89hdry00035e399jnsz3bz'
-        text: 'Learn about sagas'
-        completed: false
-    ]
+    todos = state
 
     ds = new RN.ListView.DataSource
       rowHasChanged: (r1, r2) -> r1 isnt r2
@@ -106,3 +91,10 @@ module.exports = cfx do ->
       style: styles.container
       dataSource: @state.dataSource
       renderRow: @renderRow
+
+module.exports = connect(
+  (state) ->
+    state.todoApp.Todos
+  {}
+  TodoList
+)
