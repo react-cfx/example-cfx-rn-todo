@@ -36,7 +36,7 @@ stateToLocalState = (state) ->
   switch state
     when 'SHOW_TODO_ALL'
     then 'ALL'
-    when 'SHOW_TODO_INACTIVE'
+    when 'SHOW_TODO_COMPLETED'
     then 'COMPLETED'
     when 'SHOW_TODO_ACTIVE'
     then 'INCOMPLETE'
@@ -46,7 +46,7 @@ localStateToState = (state) ->
     when 'ALL'
     then 'SHOW_TODO_ALL'
     when 'COMPLETED'
-    then 'SHOW_TODO_INACTIVE'
+    then 'SHOW_TODO_COMPLETED'
     when 'INCOMPLETE'
     then 'SHOW_TODO_ACTIVE'
 

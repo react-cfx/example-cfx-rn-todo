@@ -17,6 +17,8 @@ echo = -> console.log arguments
 CompleteToggle = require './CompleteToggle'
 AddTodo = require './AddTodo'
 
+{ getVisibleTodos } = require '../selectors/index'
+
 styles = Styl
   container:
     flex: 1
@@ -47,7 +49,7 @@ TodoList = cfx do ->
 
   constructor: (props, state) ->
 
-    todos = state
+    todos = getVisibleTodos state
 
     ds = new RN.ListView.DataSource
       rowHasChanged: (r1, r2) -> r1 isnt r2
@@ -58,11 +60,11 @@ TodoList = cfx do ->
     return
 
   componentWillReceiveProps: (nextProps) ->
-    unless nextProps.todos is @props.todos
-      @setState
-        dataSource: @state.dataSource.cloneWithRows(
-          @getTodosWithTemplate nextProps.todos
-        )
+    todos = getVisibleTodos nextProps.state
+    @setState
+      dataSource: @state.dataSource.cloneWithRows(
+        getTodosWithTemplate todos
+      )
 
   renderTodoItem: (todo) ->
 
@@ -94,7 +96,8 @@ TodoList = cfx do ->
 
 module.exports = connect(
   (state) ->
-    state.todoApp.Todos
+    visibilityFilter: state.todoApp.VisibilityFilter
+    todos: state.todoApp.Todos
   {}
   TodoList
 )

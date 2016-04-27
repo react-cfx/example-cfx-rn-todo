@@ -3,17 +3,17 @@ constants = require '../constants/Visibility'
 Types = constants.types
 {
   SHOW_TODO_ALL
-  SHOW_TODO_COMPLETED
   SHOW_TODO_ACTIVE
+  SHOW_TODO_COMPLETED
 } = Types
 
 getVisibilityFilter = (state, props) ->
 
-  state.todoApp.visibilityFilter
+  state.visibilityFilter
 
 getTodos = (state, props) ->
 
-  state.todoApp.todos
+  state.todos
 
 getVisibleTodos = createSelector(
   [
@@ -25,11 +25,15 @@ getVisibleTodos = createSelector(
     todos
   ) ->
     switch visibilityFilter
-      when 'SHOW_COMPLETED'
+      when SHOW_TODO_COMPLETED
       then todos.filter (todo) -> todo.completed
-      when 'SHOW_ACTIVE'
+      when SHOW_TODO_ACTIVE
       then todos.filter (todo) -> !todo.completed
+      when SHOW_TODO_ALL
+      then todos
       else todos
 )
 
-module.exports = getVisibleTodos
+module.exports = {
+  getVisibleTodos
+}

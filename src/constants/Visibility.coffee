@@ -12,7 +12,7 @@ module.exports = mergeActionsTypes
     types: {
       'SHOW_TODO_ALL'
       'SHOW_TODO_ACTIVE'
-      'SHOW_TODO_INACTIVE'
+      'SHOW_TODO_COMPLETED'
     }
 
   VisibilityAddModal: toActionsTypes {
