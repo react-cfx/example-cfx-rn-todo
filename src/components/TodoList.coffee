@@ -100,10 +100,14 @@ TodoList = cfx do ->
       @renderTodoItem todo
 
   render: ->
-    ListView
-      style: styles.container
-      dataSource: @state.dataSource
-      renderRow: @renderRow
+    ds = @state.dataSource
+    unless ds.getRowCount() is 0
+      ListView
+        style: styles.container
+        dataSource: ds
+        renderRow: @renderRow
+    else
+      View style: styles.container
 
 module.exports = connect(
   (state) ->

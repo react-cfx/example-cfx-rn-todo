@@ -1,17 +1,6 @@
-{ reduxActions } = require 'cfx.redux-actions'
-{
-  handleAction
-} = reduxActions
-
-Todos = handleAction(
-  ''
-  next: (state, action) -> state
-  throw: (state, action) ->
-    throw new Error {
-      state
-      action
-    }
-)
+Todos = (
+  require 'cfx.example-cfx-redux-todo'
+).reducers
 
 module.exports = {
   Todos

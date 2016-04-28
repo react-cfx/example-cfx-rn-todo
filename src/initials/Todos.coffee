@@ -1,7 +1,12 @@
-initial =
-  Todo: ->
+{ initials } = require 'cfx.example-cfx-redux-todo'
 
-Todos = [
+{
+  initial
+  initialState
+  normalizer
+} = initials
+
+Todos = initialState.todos.concat [
     id: 'cin89hdq400005e392v1cm1rp'
     text: 'Learn about actions'
     completed: false
@@ -24,4 +29,5 @@ module.exports = {
   initialState: {
     Todos
   }
+  normalizer
 }
