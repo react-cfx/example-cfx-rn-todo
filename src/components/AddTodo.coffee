@@ -4,6 +4,7 @@
   cfxify
   Styl
   Comps
+  Platform
 } = require 'cfx.rn'
 
 {
@@ -58,4 +59,4 @@ module.exports = cfx
         onBlur: @onBlurred
         placeholder: 'Add a new todo...'
     ,
-      @renderBorder()
+      @renderBorder() if Platform.OS is 'ios'

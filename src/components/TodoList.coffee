@@ -19,6 +19,10 @@ AddTodo = require './AddTodo'
 
 { getVisibleTodos } = require '../selectors/index'
 
+{ SHOW_TODO_COMPLETED } = (
+  require '../constants/Visibility'
+).types
+
 styles = Styl
   container:
     flex: 1
@@ -42,10 +46,12 @@ styles = Styl
 
 TodoList = cfx do ->
 
-  getTodosWithTemplate = (todos) ->
-    todos.concat [
-      addTodo: true
-    ]
+  getTodosWithTemplate = (todos, filter) ->
+    unless filter is SHOW_TODO_COMPLETED
+      todos.concat [
+        addTodo: true
+      ]
+    else todos
 
   constructor: (props, state) ->
 
@@ -55,7 +61,10 @@ TodoList = cfx do ->
       rowHasChanged: (r1, r2) -> r1 isnt r2
 
     @state =
-      dataSource: ds.cloneWithRows getTodosWithTemplate todos
+      dataSource: ds.cloneWithRows(
+        getTodosWithTemplate todos
+        , state.visibilityFilter
+      )
 
     return
 
@@ -64,7 +73,9 @@ TodoList = cfx do ->
     @setState
       dataSource: @state.dataSource.cloneWithRows(
         getTodosWithTemplate todos
+        , nextProps.state.visibilityFilter
       )
+
 
   renderTodoItem: (todo) ->
 
