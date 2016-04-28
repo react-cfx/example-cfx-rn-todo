@@ -16,6 +16,8 @@ echo = -> console.log arguments
 
 { setVisibilityFilter } = require '../actions/Visibility'
 
+{ capitalize } = require '../helper/index'
+
 styles = Styl
   bar:
     backgroundColor: '#81c04d'
@@ -32,36 +34,23 @@ styles = Styl
   current:
     backgroundColor: '#70a743'
 
-stateToLocalState = (state) ->
-  switch state
-    when 'SHOW_TODO_ALL'
-    then 'ALL'
-    when 'SHOW_TODO_COMPLETED'
-    then 'COMPLETED'
-    when 'SHOW_TODO_ACTIVE'
-    then 'INCOMPLETE'
-
-localStateToState = (state) ->
-  switch state
-    when 'ALL'
-    then 'SHOW_TODO_ALL'
-    when 'COMPLETED'
-    then 'SHOW_TODO_COMPLETED'
-    when 'INCOMPLETE'
-    then 'SHOW_TODO_ACTIVE'
+{
+  filterToLocalFilter
+  localFilterToFilter
+} = require '../helper/index'
 
 VisibilityFilter = cfx
 
   constructor: (props, state) ->
 
     @state =
-      activeFilter: stateToLocalState state
+      activeFilter: filterToLocalFilter state
 
     @
 
   componentWillReceiveProps: (nextProps) ->
     @setState
-      activeFilter: stateToLocalState nextProps.state
+      activeFilter: filterToLocalFilter nextProps.state
 
   render: (props, state) ->
 
@@ -88,10 +77,10 @@ VisibilityFilter = cfx
         TouchableOpacity
           style: buttonStyle
           onPress: ->
-            setVisibilityFilter localStateToState filter
+            setVisibilityFilter localFilterToFilter filter
         ,
           Text style: styles.text
-          , filter
+          , capitalize filter
 
       )
 

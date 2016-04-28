@@ -42,6 +42,13 @@
     "npm-watch": "^0.1.4",
     "shelljs": "^0.6.0"
   },
+  "_dependencies": {
+    "cfx.redux": "../cfx.redux",
+    "cfx.redux-actions": "../cfx.redux-actions",
+    "cfx.redux-saga": "../cfx.redux-saga",
+    "cfx.redux-types": "../cfx.redux-types",
+    "cfx.rn": "../cfx.rn"
+  },
   "dependencies": {
     "cfx.redux": "git+https://github.com/react-cfx/cfx.redux.git",
     "cfx.redux-actions": "git+https://github.com/react-cfx/cfx.redux-actions.git",
@@ -51,6 +58,7 @@
     "coffee-script": "^1.10.0",
     "react": "^0.14.8",
     "react-native": "^0.23.1",
-    "redux-logger": "^2.6.1"
+    "redux-logger": "^2.6.1",
+    "reselect": "^2.5.1"
   }
 }

@@ -2,6 +2,7 @@
   cfx
   Styl
   Comps
+  connect
 } = require 'cfx.rn'
 {
   View
@@ -22,9 +23,20 @@ styles = Styl
     textAlign: 'center'
     fontWeight: 'bold'
 
-module.exports = cfx ->
+{
+  capitalize
+  filterToLocalFilter
+} = require '../helper/index'
+
+TitleBar = cfx (props, state) ->
 
   View style: styles.toolbar
   ,
     Text style: styles.title
-    , "Todos"
+    , "#{capitalize filterToLocalFilter state} Todos"
+
+module.exports = connect(
+  (state) -> state.todoApp.VisibilityFilter
+  {}
+  TitleBar
+)
