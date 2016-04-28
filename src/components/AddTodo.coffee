@@ -5,12 +5,17 @@
   Styl
   Comps
   Platform
+  connect
 } = require 'cfx.rn'
 
 {
   View
   Text
 } = Comps
+
+{ addTodoState } = require '../actions/index'
+
+{ initial } = require '../initials/index'
 
 TextInput = cfxify RN.TextInput
 
@@ -27,15 +32,27 @@ styles = Styl
     height: 1
     backgroundColor: 'gray'
 
-module.exports = cfx
+AddTodo = cfx
 
   constructor: ->
     @state =
       focused: false
+      value: null
 
   renderBorder: ->
     if @state.focused
       View style: styles.border
+
+  onSubmit: (props, state) ->
+    {
+      addTodoState
+    } = @props.actions
+    addTodoState
+      todo: initial.todo @state.value
+
+  onText: (text) ->
+    @state.value = text
+    @setState @state
 
   onFocused: () ->
 
@@ -53,10 +70,16 @@ module.exports = cfx
     ,
       TextInput
         style: styles.input
-        # onChangeText: @onText
-        # onSubmitEditing: @onSubmit
+        onChangeText: @onText
+        onSubmitEditing: @onSubmit
         onFocus: @onFocused
         onBlur: @onBlurred
         placeholder: 'Add a new todo...'
     ,
       @renderBorder() if Platform.OS is 'ios'
+
+module.exports = connect(
+  (state) -> state.todoApp.Todos
+  { addTodoState }
+  AddTodo
+)
