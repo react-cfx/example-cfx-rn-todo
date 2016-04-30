@@ -1,6 +1,8 @@
 { Comp } = require 'cfx.rn'
 
-navigator.mimeTypes = [] unless navigator.mimeTypes
+# For fix cuid()
+unless navigator.mimeTypes
+  navigator.mimeTypes = []
 
 App = require './App/index'
 

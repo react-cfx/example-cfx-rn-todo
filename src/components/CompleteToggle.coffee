@@ -1,3 +1,4 @@
+echo = -> console.log arguments
 {
   cfx
   Styl
@@ -22,6 +23,8 @@ styles = Styl
 
 module.exports = cfx
 
+  toggleChecked: -> @props.toggleChecked()
+
   getStyle: ->
     if @props.checked
     then styles.active
@@ -34,3 +37,4 @@ module.exports = cfx
         styles.button
         @getStyle()
       ]
+      onPress: @toggleChecked

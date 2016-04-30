@@ -23,6 +23,8 @@ AddTodo = require './AddTodo'
   require '../constants/Visibility'
 ).types
 
+{ modifyTodoState } = require '../actions/index'
+
 styles = Styl
   container:
     flex: 1
@@ -61,6 +63,7 @@ TodoList = cfx do ->
       rowHasChanged: (r1, r2) -> r1 isnt r2
 
     @state =
+      todos: state.todos
       dataSource: ds.cloneWithRows(
         getTodosWithTemplate todos
         , state.visibilityFilter
@@ -71,11 +74,25 @@ TodoList = cfx do ->
   componentWillReceiveProps: (nextProps) ->
     todos = getVisibleTodos nextProps.state
     @setState
+      todos: nextProps.state.todos
       dataSource: @state.dataSource.cloneWithRows(
         getTodosWithTemplate todos
         , nextProps.state.visibilityFilter
       )
 
+  toggleChecked: (todoId) ->
+    { modifyTodoState } = @props.actions
+    { todos } = @state
+    todos.forEach (
+      todo
+      index
+      array
+    ) ->
+      if todo.id is todoId
+        modifyTodoState
+          index: index
+          todo:
+            completed: !todo.completed
 
   renderTodoItem: (todo) ->
 
@@ -89,6 +106,8 @@ TodoList = cfx do ->
         CompleteToggle
           style: styles.toggle
           checked: todo.completed
+          toggleChecked: @toggleChecked
+          .bind @, todo.id
       ,
         Text style: styles.text
         , todo.text
@@ -113,6 +132,6 @@ module.exports = connect(
   (state) ->
     visibilityFilter: state.todoApp.VisibilityFilter
     todos: state.todoApp.Todos
-  {}
+  { modifyTodoState }
   TodoList
 )
