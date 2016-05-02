@@ -5,6 +5,7 @@ echo = -> console.log arguments
   cfxify
   Styl
   Comps
+  connect
 } = require 'cfx.rn'
 {
   View
@@ -12,7 +13,14 @@ echo = -> console.log arguments
 
 TitleBar = require '../components/TitleBar'
 TodoList = require '../components/TodoList'
+TodoRemove = require '../components/TodoRemove'
 Filters = require '../components/Filters'
+
+constants = require '../constants/index'
+{
+  SHOW_TODO_LIST
+  SHOW_TODO_REMOVE
+} = constants.types
 
 styles = Styl
 
@@ -28,12 +36,38 @@ styles = Styl
   add:
     flex: 1
 
-module.exports = cfx ->
+TodoApp = cfx
 
-  View style: styles.container
-  ,
-    TitleBar style: styles.title
-  ,
-    TodoList style: styles.list
-  ,
-    Filters style: styles.filters
+  constructor: (props, state) ->
+    @state =
+      visibilityTodoRemove: state
+    @
+
+  _Container: ->
+    switch @state.visibilityTodoRemove
+      when SHOW_TODO_LIST
+      then TodoList
+      when SHOW_TODO_REMOVE
+      then TodoRemove
+      else return # TODO throw
+
+  componentWillReceiveProps: (nextProps) ->
+    echo nextProps
+
+  render: (props, state) ->
+
+    Container = @_Container()
+
+    View style: styles.container
+    ,
+      TitleBar style: styles.title
+    ,
+      Container style: styles.list
+    ,
+      Filters style: styles.filters
+
+module.exports = connect(
+  (state) -> state.todoApp.VisibilityTodoRemove
+  {}
+  TodoApp
+)

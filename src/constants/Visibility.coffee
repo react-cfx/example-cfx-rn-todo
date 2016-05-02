@@ -15,6 +15,15 @@ module.exports = mergeActionsTypes
       'SHOW_TODO_COMPLETED'
     }
 
+  VisibilityTodoRemove: toActionsTypes {
+    'SET_VISIBILITY_TODO_REMOVE'
+  }
+  VisibilityTodoRemoveTypes:
+    types: {
+      'SHOW_TODO_LIST'
+      'SHOW_TODO_REMOVE'
+    }
+
   VisibilityAddModal: toActionsTypes {
     'SET_VISIBILITY_ADD_MODAL'
   }

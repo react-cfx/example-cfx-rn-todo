@@ -6,6 +6,7 @@
   normalizer
 } = initials
 
+# Todos = initialState.todos
 Todos = initialState.todos.concat [
     id: 'cin89hdq400005e392v1cm1rp'
     text: 'Learn about actions'
