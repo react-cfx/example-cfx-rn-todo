@@ -38,31 +38,34 @@ styles = Styl
 
 TodoApp = cfx
 
-  constructor: (props, state) ->
-    @state =
-      visibilityTodoRemove: state
-    @
-
-  _Container: ->
-    switch @state.visibilityTodoRemove
+  _Container: (visibilityTodoRemove) ->
+    switch visibilityTodoRemove
       when SHOW_TODO_LIST
       then TodoList
       when SHOW_TODO_REMOVE
       then TodoRemove
       else return # TODO throw
 
+  constructor: (props, state) ->
+    @state =
+      visibilityTodoRemove: state
+      Container: @_Container state
+    @
+
   componentWillReceiveProps: (nextProps) ->
-    echo nextProps
+
+    unless @state.visibilityTodoRemove is nextProps.state
+      @setState
+        visibilityTodoRemove: nextProps.state
+        Container: @_Container nextProps.state
 
   render: (props, state) ->
-
-    Container = @_Container()
 
     View style: styles.container
     ,
       TitleBar style: styles.title
     ,
-      Container style: styles.list
+      @state.Container style: styles.list
     ,
       Filters style: styles.filters
 

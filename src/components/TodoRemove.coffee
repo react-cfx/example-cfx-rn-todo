@@ -39,8 +39,31 @@ styles = Styl
   viewRow:
     flexDirection: 'row'
     alignItems: 'center'
-  addTodo:
-    paddingLeft: 30
+
+  button:
+    flex: 1
+    flexDirection: 'row'
+    justifyContent: 'center'
+    alignItems: 'center'
+
+    width: 200
+    height: 50
+    borderColor: '#81c04d'
+    borderWidth: 1
+    borderRadius: 5
+    backgroundColor: 'white'
+
+    shadowColor: "#e4f2d9"
+    shadowOffset:
+      width: 2
+      height: 2
+    shadowOpacity: 0.5
+    shadowRadius: 5
+
+  buttonText:
+    padding: 5
+    color: "#81c04d"
+
   text:
     flex: 1
     fontSize: 16
@@ -49,11 +72,9 @@ styles = Styl
 TodoList = cfx do ->
 
   getTodosWithTemplate = (todos, filter) ->
-    unless filter is SHOW_TODO_COMPLETED
-      todos.concat [
-        addTodo: true
-      ]
-    else todos
+    todos.concat [
+      submitButton: true
+    ]
 
   constructor: (props, state) ->
 
@@ -80,19 +101,19 @@ TodoList = cfx do ->
         , nextProps.state.visibilityFilter
       )
 
-  toggleChecked: (todoId) ->
-    { modifyTodoState } = @props.actions
-    { todos } = @state
-    todos.forEach (
-      todo
-      index
-      array
-    ) ->
-      if todo.id is todoId
-        modifyTodoState
-          index: index
-          todo:
-            completed: !todo.completed
+  # toggleChecked: (todoId) ->
+  #   { modifyTodoState } = @props.actions
+  #   { todos } = @state
+  #   todos.forEach (
+  #     todo
+  #     index
+  #     array
+  #   ) ->
+  #     if todo.id is todoId
+  #       modifyTodoState
+  #         index: index
+  #         todo:
+  #           completed: !todo.completed
 
   renderTodoItem: (todo) ->
 
@@ -106,15 +127,27 @@ TodoList = cfx do ->
         CompleteToggle
           style: styles.toggle
           checked: todo.completed
-          toggleChecked: @toggleChecked
-          .bind @, todo.id
+          # toggleChecked: @toggleChecked
+          # .bind @, todo.id
       ,
         Text style: styles.text
         , todo.text
 
   renderRow: (todo) ->
-    if todo.addTodo
-      AddTodo()
+    if todo.submitButton
+
+      View
+        style:
+          marginTop: 20
+          alignItems: 'center'
+      ,
+        TouchableHighlight
+        ,
+          View style: styles.button
+          ,
+            Text style: styles.buttonText
+            , 'DELETE'
+
     else
       @renderTodoItem todo
 

@@ -60,8 +60,8 @@ VisibilityFilter = cfx
 
     renderFilters = [
       'ALL'
-      'COMPLETED'
       'INCOMPLETE'
+      'COMPLETED'
     ].reduce (result, filter, index, array) ->
 
       buttonStyle =

@@ -6,8 +6,6 @@ echo = -> console.log arguments
 } = require 'cfx.rn'
 {
   View
-  Text
-
   TouchableOpacity
 } = Comps
 
@@ -30,11 +28,14 @@ module.exports = cfx
     then styles.active
     else styles.inactive
 
-  render: ->
-
-    TouchableOpacity
-      style: [
-        styles.button
-        @getStyle()
-      ]
-      onPress: @toggleChecked
+  render: (props, state) ->
+    style = [
+      styles.button
+      @getStyle()
+    ]
+    if props.toggleChecked
+      TouchableOpacity
+        style: style
+        onPress: @toggleChecked
+    else
+      View style: style
