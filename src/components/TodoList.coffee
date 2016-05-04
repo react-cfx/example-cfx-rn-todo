@@ -46,9 +46,9 @@ styles = Styl
     fontSize: 16
     marginLeft: 10
 
-TodoList = cfx do ->
+TodoList = cfx
 
-  getTodosWithTemplate = (todos, filter) ->
+  _getTodosWithTemplate: (todos, filter) ->
     unless filter is SHOW_TODO_COMPLETED
       todos.concat [
         addTodo: true
@@ -65,7 +65,7 @@ TodoList = cfx do ->
     @state =
       todos: state.todos
       dataSource: ds.cloneWithRows(
-        getTodosWithTemplate todos
+        @_getTodosWithTemplate todos
         , state.visibilityFilter
       )
 
@@ -76,7 +76,7 @@ TodoList = cfx do ->
     @setState
       todos: nextProps.state.todos
       dataSource: @state.dataSource.cloneWithRows(
-        getTodosWithTemplate todos
+        @_getTodosWithTemplate todos
         , nextProps.state.visibilityFilter
       )
 

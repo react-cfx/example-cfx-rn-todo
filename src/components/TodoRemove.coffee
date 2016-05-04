@@ -71,16 +71,16 @@ styles = Styl
     fontSize: 16
     marginLeft: 10
 
-TodoList = cfx do ->
+TodoList = cfx
 
-  getTodosWithTemplate = (todos) ->
+  _getTodosWithTemplate: (todos) ->
     unless todos.length is 0
       todos.concat [
         submitButton: true
       ]
     else todos
 
-  setWaitDel = (todos, todoId) ->
+  _setWaitDel: (todos, todoId) ->
     todos.reduce (result, current, index, array) ->
       result.push assign {}
       , current
@@ -100,12 +100,12 @@ TodoList = cfx do ->
       result
     , []
 
-  newState = (ds, state, todoId) ->
-    todos = setWaitDel state.todos, todoId
+  _newState: (ds, state, todoId) ->
+    todos = @_setWaitDel state.todos, todoId
     state: state
     todos: todos
     dataSource: ds.cloneWithRows(
-      getTodosWithTemplate getVisibleTodos(
+      @_getTodosWithTemplate getVisibleTodos(
         visibilityFilter: state.visibilityFilter
         todos: todos
       )
@@ -116,7 +116,7 @@ TodoList = cfx do ->
     ds = new RN.ListView.DataSource
       rowHasChanged: (r1, r2) -> r1 isnt r2
 
-    @state = newState ds, state
+    @state = @_newState ds, state
     @
 
   inheritWaitDelFromState: (oldTodos, newTodos) ->
@@ -154,7 +154,7 @@ TodoList = cfx do ->
       todos = @inheritWaitDelFromState selfTodos
       , nextProps.state.todos
 
-      @setState newState @state.dataSource
+      @setState @_newState @state.dataSource
       , (
         assign {}
         , nextProps.state
@@ -189,7 +189,7 @@ TodoList = cfx do ->
         result
       , []
 
-      @setState newState @state.dataSource
+      @setState @_newState @state.dataSource
       , (
         assign {}
         , nextProps.state
@@ -198,7 +198,7 @@ TodoList = cfx do ->
 
   toggleWaitDel: (todoId) ->
 
-    @setState newState @state.dataSource
+    @setState @_newState @state.dataSource
     ,
       visibilityFilter: @state.state.visibilityFilter
       todos: @state.todos
