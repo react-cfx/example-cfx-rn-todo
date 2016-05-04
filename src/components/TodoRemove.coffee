@@ -119,32 +119,82 @@ TodoList = cfx do ->
     @state = newState ds, state
     @
 
-  componentWillReceiveProps: (nextProps) ->
+  inheritWaitDelFromState: (oldTodos, newTodos) ->
 
-    selfTodos = @state.todos.slice()
-
-    todos = nextProps.state.todos.reduce (
+    newTodos.reduce (
       result
       current
       index
       array
     ) ->
-      for selfTodo in selfTodos
-        if current.id is selfTodo.id
-          if selfTodo.waitDel
+      for oldTodo in oldTodos
+        if current.id is oldTodo.id
+          if oldTodo.waitDel
             result.push assign {}
             , current
-            , waitDel: selfTodo.waitDel
+            , waitDel: oldTodo.waitDel
           else
-            result.push current
+            result.push assign {}
+            , current
+            , waitDel: false
+          return result
+      result.push current
       result
     , []
 
-    @setState newState @state.dataSource
-    , {
-      visibilityFilter: nextProps.state.visibilityFilter
-      todos
-    }
+  componentWillReceiveProps: (nextProps) ->
+
+    selfTodos = @state.todos.slice()
+
+    if (
+      nextProps.state.visibilityFilter isnt @state.state.visibilityFilter or
+      selfTodos.length isnt nextProps.state.todos.length
+    )
+
+      todos = @inheritWaitDelFromState selfTodos
+      , nextProps.state.todos
+
+      @setState newState @state.dataSource
+      , (
+        assign {}
+        , nextProps.state
+        , todos: todos
+      )
+
+    if nextProps.state.visibilityAllToRemove isnt @state.state.visibilityAllToRemove
+
+      waitDels = getVisibleTodos nextProps.state
+
+      todos = @state.state.todos.reduce (
+        result
+        current
+        index
+        array
+      ) ->
+        for waitDel in waitDels
+          if waitDel.id is current.id
+            switch nextProps.state.visibilityAllToRemove
+              when 'SELECT_ALL_TO_REMOVE'
+                result.push assign {}
+                , current
+                , waitDel: true
+                return result
+              when 'CANCEL_ALL_TO_REMOVE'
+                result.push assign {}
+                , current
+                , waitDel: false
+                return result
+              else return # TODO throw
+        result.push current
+        result
+      , []
+
+      @setState newState @state.dataSource
+      , (
+        assign {}
+        , nextProps.state
+        , todos: todos
+      )
 
   toggleWaitDel: (todoId) ->
 
@@ -222,6 +272,7 @@ TodoList = cfx do ->
 module.exports = connect(
   (state) ->
     visibilityFilter: state.todoApp.VisibilityFilter
+    visibilityAllToRemove: state.todoApp.VisibilityAllToRemove
     todos: state.todoApp.Todos
   {
     modifyTodoState

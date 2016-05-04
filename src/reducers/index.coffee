@@ -3,6 +3,7 @@
 {
   VisibilityFilter
   VisibilityTodoRemove
+  VisibilityAllToRemove
   VisibilityAddModal
 } = require './Visibility'
 {
@@ -12,6 +13,7 @@
 module.exports = mergeReduce {
   VisibilityFilter
   VisibilityTodoRemove
+  VisibilityAllToRemove
   VisibilityAddModal
   Todos
 }

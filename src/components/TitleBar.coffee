@@ -15,12 +15,15 @@ echo = -> console.log arguments
 
 {
   setVisibilityTodoRemove
+  setVisibilityAllToRemove
 } = require '../actions/index'
 
 constants = require '../constants/index'
 {
   SHOW_TODO_LIST
   SHOW_TODO_REMOVE
+  SELECT_ALL_TO_REMOVE
+  CANCEL_ALL_TO_REMOVE
 } = constants.types
 
 {
@@ -84,14 +87,31 @@ TitleBar = cfx
       else return # TODO throw
 
   componentWillReceiveProps: (nextProps) ->
-    container =
-      current: @state.state.VisibilityTodoRemove
-      next: nextProps.state.VisibilityTodoRemove
-    unless container.next is container.current
+    currentState = @state.state
+    nextState = nextProps.state
+    if (
+      nextState.VisibilityTodoRemove isnt currentState.VisibilityTodoRemove or
+      nextState.VisibilityAllToRemove isnt currentState.VisibilityAllToRemove
+    )
       @setState
         state: nextProps.state
-        leftButtonText: @_leftButtonText container.next
-        rightButtonText: @_rightButtonText container.next
+        leftButtonText: @_leftButtonText nextState.VisibilityTodoRemove
+        rightButtonText: @_rightButtonText nextState.VisibilityTodoRemove
+
+  toggleSelectAllToRemove: ->
+    { setVisibilityAllToRemove } = @props.actions
+    { VisibilityAllToRemove } = @state.state
+    switch VisibilityAllToRemove
+      when CANCEL_ALL_TO_REMOVE
+      then setVisibilityAllToRemove SELECT_ALL_TO_REMOVE
+      when SELECT_ALL_TO_REMOVE
+      then setVisibilityAllToRemove CANCEL_ALL_TO_REMOVE
+      else return # TODO throw
+
+  handleRightButton: ->
+    if @state.state.VisibilityTodoRemove is SHOW_TODO_REMOVE
+      @toggleSelectAllToRemove.call @
+    # else
 
   render: (props, state) ->
     TitlePrefix = capitalize filterToLocalFilter state.VisibilityFilter
@@ -110,7 +130,7 @@ TitleBar = cfx
     ,
       TouchableOpacity
         style: styles.button
-        # onPress: showModal
+        onPress: @handleRightButton.bind @
       ,
         Text style: styles.text
         , @state.rightButtonText
@@ -118,7 +138,11 @@ TitleBar = cfx
 module.exports = connect(
   (state) ->
     VisibilityTodoRemove: state.todoApp.VisibilityTodoRemove
+    VisibilityAllToRemove: state.todoApp.VisibilityAllToRemove
     VisibilityFilter: state.todoApp.VisibilityFilter
-  { setVisibilityTodoRemove }
+  {
+    setVisibilityTodoRemove
+    setVisibilityAllToRemove
+  }
   TitleBar
 )
