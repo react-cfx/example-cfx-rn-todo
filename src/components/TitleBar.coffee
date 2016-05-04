@@ -84,14 +84,14 @@ TitleBar = cfx
       else return # TODO throw
 
   componentWillReceiveProps: (nextProps) ->
-    content =
+    container =
       current: @state.state.VisibilityTodoRemove
       next: nextProps.state.VisibilityTodoRemove
-    unless content.next is content.current
+    unless container.next is container.current
       @setState
         state: nextProps.state
-        leftButtonText: @_leftButtonText content.next
-        rightButtonText: @_rightButtonText content.next
+        leftButtonText: @_leftButtonText container.next
+        rightButtonText: @_rightButtonText container.next
 
   render: (props, state) ->
     TitlePrefix = capitalize filterToLocalFilter state.VisibilityFilter

@@ -1,5 +1,9 @@
 echo = -> console.log arguments
 {
+  assign
+  keys
+} = Object
+{
   RN
   cfx
   Styl
@@ -10,8 +14,7 @@ echo = -> console.log arguments
   View
   Text
   ListView
-
-  TouchableHighlight
+  TouchableOpacity
 } = Comps
 
 CompleteToggle = require './CompleteToggle'
@@ -28,14 +31,13 @@ AddTodo = require './AddTodo'
 styles = Styl
   container:
     flex: 1
-    # alignItems: 'center'
-    # justifyContent: 'center'
   row:
     flexDirection: 'row'
     paddingTop: 20
     paddingBottom: 20
     paddingLeft: 20
     paddingRight: 20
+
   viewRow:
     flexDirection: 'row'
     alignItems: 'center'
@@ -48,12 +50,12 @@ styles = Styl
 
     width: 200
     height: 50
-    borderColor: '#81c04d'
+    borderColor: '#e4f2d9'
     borderWidth: 1
     borderRadius: 5
-    backgroundColor: 'white'
+    backgroundColor: '#81c04d'
 
-    shadowColor: "#e4f2d9"
+    shadowColor: "#81c04d"
     shadowOffset:
       width: 2
       height: 2
@@ -62,7 +64,7 @@ styles = Styl
 
   buttonText:
     padding: 5
-    color: "#81c04d"
+    color: "white"
 
   text:
     flex: 1
@@ -72,65 +74,115 @@ styles = Styl
 TodoList = cfx do ->
 
   getTodosWithTemplate = (todos, filter) ->
-    todos.concat [
-      submitButton: true
-    ]
+    unless todos.length is 0
+      todos.concat [
+        submitButton: true
+      ]
+    else todos
+
+  setWaitDel = (todos, todoId) ->
+    todos.reduce (
+      result
+      current
+      index
+      array
+    ) ->
+      result.push assign {}
+      , current
+      , waitDel:
+        if current.waitDel
+        then (
+          if todoId? and todoId is current.id
+          then !current.waitDel
+          else current.waitDel
+        )
+        else (
+          if todoId? and todoId is current.id
+          then true
+          else false
+        )
+
+      result
+    , []
+
+  newState = (ds, state, todoId) ->
+    todos = setWaitDel state.todos, todoId
+    state: state
+    todos: todos
+    dataSource: ds.cloneWithRows(
+      getTodosWithTemplate getVisibleTodos(
+        visibilityFilter: state.visibilityFilter
+        todos: todos
+      ), state.visibilityFilter
+    )
 
   constructor: (props, state) ->
-
-    todos = getVisibleTodos state
 
     ds = new RN.ListView.DataSource
       rowHasChanged: (r1, r2) -> r1 isnt r2
 
-    @state =
-      todos: state.todos
-      dataSource: ds.cloneWithRows(
-        getTodosWithTemplate todos
-        , state.visibilityFilter
-      )
-
-    return
+    @state = newState ds, state
+    @
 
   componentWillReceiveProps: (nextProps) ->
-    todos = getVisibleTodos nextProps.state
-    @setState
-      todos: nextProps.state.todos
-      dataSource: @state.dataSource.cloneWithRows(
-        getTodosWithTemplate todos
-        , nextProps.state.visibilityFilter
-      )
 
-  # toggleChecked: (todoId) ->
-  #   { modifyTodoState } = @props.actions
-  #   { todos } = @state
-  #   todos.forEach (
-  #     todo
-  #     index
-  #     array
-  #   ) ->
-  #     if todo.id is todoId
-  #       modifyTodoState
-  #         index: index
-  #         todo:
-  #           completed: !todo.completed
+    selfTodos = @state.todos.slice()
 
-  renderTodoItem: (todo) ->
+    todos = nextProps.state.todos.reduce (
+      result
+      current
+      index
+      array
+    ) ->
+      for selfTodo in selfTodos
+        if current.id is selfTodo.id
+          if selfTodo.waitDel
+            result.push assign {}
+            , current
+            , waitDel: selfTodo.waitDel
+          else
+            result.push current
+      result
+    , []
 
-    TouchableHighlight
+    @setState newState @state.dataSource
+    , {
+      visibilityFilter: nextProps.state.visibilityFilter
+      todos
+    }
+
+  toggleWaitDel: (todoId) ->
+
+    @setState newState @state.dataSource
+    ,
+      visibilityFilter: @state.state.visibilityFilter
+      todos: @state.todos
+    , todoId
+
+  renderTodoItem: (todo, sectionID, rowID) ->
+
+    textStyle =
+      if todo.waitDel
+      then [
+        styles.text
+        color: 'red'
+        textDecorationLine: 'line-through'
+      ]
+      else styles.text
+
+    TouchableOpacity
       style: styles.row
       underlayColor: "#e4f2d9"
       key: todo.id
+      onPress: @toggleWaitDel.bind @, todo.id
     ,
       View style: styles.viewRow
       ,
         CompleteToggle
           style: styles.toggle
           checked: todo.completed
-          # toggleChecked: @toggleChecked
-          # .bind @, todo.id
       ,
-        Text style: styles.text
+        Text style: textStyle
         , todo.text
 
   renderRow: (todo) ->
@@ -141,12 +193,10 @@ TodoList = cfx do ->
           marginTop: 20
           alignItems: 'center'
       ,
-        TouchableHighlight
+        TouchableOpacity style: styles.button
         ,
-          View style: styles.button
-          ,
-            Text style: styles.buttonText
-            , 'DELETE'
+          Text style: styles.buttonText
+          , 'DELETE'
 
     else
       @renderTodoItem todo
