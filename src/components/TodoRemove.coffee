@@ -1,8 +1,5 @@
 echo = -> console.log arguments
-{
-  assign
-  keys
-} = Object
+{ assign } = Object
 {
   RN
   cfx
@@ -26,7 +23,10 @@ AddTodo = require './AddTodo'
   require '../constants/Visibility'
 ).types
 
-{ modifyTodoState } = require '../actions/index'
+{
+  modifyTodoState
+  removeTodoState
+} = require '../actions/index'
 
 styles = Styl
   container:
@@ -73,7 +73,7 @@ styles = Styl
 
 TodoList = cfx do ->
 
-  getTodosWithTemplate = (todos, filter) ->
+  getTodosWithTemplate = (todos) ->
     unless todos.length is 0
       todos.concat [
         submitButton: true
@@ -81,12 +81,7 @@ TodoList = cfx do ->
     else todos
 
   setWaitDel = (todos, todoId) ->
-    todos.reduce (
-      result
-      current
-      index
-      array
-    ) ->
+    todos.reduce (result, current, index, array) ->
       result.push assign {}
       , current
       , waitDel:
@@ -113,7 +108,7 @@ TodoList = cfx do ->
       getTodosWithTemplate getVisibleTodos(
         visibilityFilter: state.visibilityFilter
         todos: todos
-      ), state.visibilityFilter
+      )
     )
 
   constructor: (props, state) ->
@@ -185,6 +180,17 @@ TodoList = cfx do ->
         Text style: textStyle
         , todo.text
 
+  removeTodos: (todoId) ->
+    { removeTodoState } = @props.actions
+    todos = getVisibleTodos(
+      visibilityFilter: @state.state.visibilityFilter
+      todos: @state.todos
+    )
+    todos.forEach (current, index, array) ->
+      if current.waitDel
+        removeTodoState
+          todoId: current.id
+
   renderRow: (todo) ->
     if todo.submitButton
 
@@ -193,7 +199,9 @@ TodoList = cfx do ->
           marginTop: 20
           alignItems: 'center'
       ,
-        TouchableOpacity style: styles.button
+        TouchableOpacity
+          style: styles.button
+          onPress: @removeTodos.bind @, todo.id
         ,
           Text style: styles.buttonText
           , 'DELETE'
@@ -215,6 +223,9 @@ module.exports = connect(
   (state) ->
     visibilityFilter: state.todoApp.VisibilityFilter
     todos: state.todoApp.Todos
-  { modifyTodoState }
+  {
+    modifyTodoState
+    removeTodoState
+  }
   TodoList
 )
