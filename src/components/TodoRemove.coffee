@@ -19,7 +19,11 @@ AddTodo = require './AddTodo'
 
 { getVisibleTodos } = require '../selectors/index'
 
-{ SHOW_TODO_COMPLETED } = (
+{
+  SHOW_TODO_COMPLETED
+  SELECT_ALL_TO_REMOVE
+  CANCEL_ALL_TO_REMOVE
+} = (
   require '../constants/Visibility'
 ).types
 
@@ -119,7 +123,7 @@ TodoList = cfx
     @state = @_newState ds, state
     @
 
-  inheritWaitDelFromState: (oldTodos, newTodos) ->
+  getTodosSwitchVisibilityFilter: (oldTodos, newTodos) ->
 
     newTodos.reduce (
       result
@@ -129,7 +133,7 @@ TodoList = cfx
     ) ->
       for oldTodo in oldTodos
         if current.id is oldTodo.id
-          if oldTodo.waitDel
+          if oldTodo.waitDel is true
             result.push assign {}
             , current
             , waitDel: oldTodo.waitDel
@@ -142,30 +146,19 @@ TodoList = cfx
       result
     , []
 
-  componentWillReceiveProps: (nextProps) ->
+  getTodosSwitchVisibilityAllToRemoveA: (
+    stateTodos
+    waitDels
+  ) ->
+    count = 0
+    for todo in stateTodos
+      for waitDel in waitDels
+        if waitDel.id is todo.id
+          if todo.waitDel is true
+            count++
 
-    selfTodos = @state.todos.slice()
-
-    if (
-      nextProps.state.visibilityFilter isnt @state.state.visibilityFilter or
-      selfTodos.length isnt nextProps.state.todos.length
-    )
-
-      todos = @inheritWaitDelFromState selfTodos
-      , nextProps.state.todos
-
-      @setState @_newState @state.dataSource
-      , (
-        assign {}
-        , nextProps.state
-        , todos: todos
-      )
-
-    if nextProps.state.visibilityAllToRemove isnt @state.state.visibilityAllToRemove
-
-      waitDels = getVisibleTodos nextProps.state
-
-      todos = @state.state.todos.reduce (
+    SelectOrCancelAll = (todos, waitDelBool) ->
+      todos.reduce (
         result
         current
         index
@@ -173,35 +166,55 @@ TodoList = cfx
       ) ->
         for waitDel in waitDels
           if waitDel.id is current.id
-            switch nextProps.state.visibilityAllToRemove
-              when 'SELECT_ALL_TO_REMOVE'
-                result.push assign {}
-                , current
-                , waitDel: true
-                return result
-              when 'CANCEL_ALL_TO_REMOVE'
-                result.push assign {}
-                , current
-                , waitDel: false
-                return result
-              else return # TODO throw
+            result.push assign {}
+            , current
+            , waitDel: waitDelBool
+            return result
         result.push current
         result
       , []
 
+    if count is waitDels.length # Cancel All
+      SelectOrCancelAll stateTodos, false
+    else # Select All
+      SelectOrCancelAll stateTodos, true
+
+  componentWillReceiveProps: (nextProps) ->
+
+    if (
+      nextProps.state.visibilityFilter isnt @state.state.visibilityFilter or
+      @state.state.todos.length isnt nextProps.state.todos.length
+    )
+
+      todos = @getTodosSwitchVisibilityFilter @state.todos
+      , nextProps.state.todos
+
       @setState @_newState @state.dataSource
-      , (
+      ,
         assign {}
         , nextProps.state
         , todos: todos
-      )
+
+    if nextProps.state.visibilityAllToRemove isnt @state.state.visibilityAllToRemove
+
+      waitDels = getVisibleTodos nextProps.state
+
+      todos = @getTodosSwitchVisibilityAllToRemoveA @state.todos
+      , waitDels
+
+      @setState @_newState @state.dataSource
+      ,
+        assign {}
+        , nextProps.state
+        , todos: todos
 
   toggleWaitDel: (todoId) ->
 
     @setState @_newState @state.dataSource
     ,
-      visibilityFilter: @state.state.visibilityFilter
-      todos: @state.todos
+      assign {}
+      , @state.state
+      , todos: @state.todos
     , todoId
 
   renderTodoItem: (todo, sectionID, rowID) ->
@@ -232,10 +245,9 @@ TodoList = cfx
 
   removeTodos: (todoId) ->
     { removeTodoState } = @props.actions
-    todos = getVisibleTodos(
+    todos = getVisibleTodos
       visibilityFilter: @state.state.visibilityFilter
       todos: @state.todos
-    )
     todos.forEach (current, index, array) ->
       if current.waitDel
         removeTodoState
