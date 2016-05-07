@@ -2,9 +2,8 @@
 { initialState } = require '../initials/index'
 {
   VisibilityFilter
-  VisibilityTodoRemove
+  VisibilityContainer
   VisibilityAllToRemove
-  VisibilityAddModal
 } = require './Visibility'
 {
   Todos
@@ -12,9 +11,8 @@
 
 module.exports = mergeReduce {
   VisibilityFilter
-  VisibilityTodoRemove
+  VisibilityContainer
   VisibilityAllToRemove
-  VisibilityAddModal
   Todos
 }
 , initialState

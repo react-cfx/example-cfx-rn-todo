@@ -14,7 +14,7 @@ echo = -> console.log arguments
 } = Comps
 
 {
-  setVisibilityTodoRemove
+  setVisibilityContainer
   setVisibilityAllToRemove
 } = require '../actions/index'
 
@@ -22,6 +22,7 @@ constants = require '../constants/index'
 {
   SHOW_TODO_LIST
   SHOW_TODO_REMOVE
+  SHOW_TODO_INFO
   SELECT_ALL_TO_REMOVE
   CANCEL_ALL_TO_REMOVE
 } = constants.types
@@ -52,51 +53,47 @@ styles = Styl
 
 TitleBar = cfx
 
-  _leftButtonText: (VisibilityTodoRemove) ->
-    switch VisibilityTodoRemove
+  _leftButtonText: (VisibilityContainer) ->
+    switch VisibilityContainer
       when SHOW_TODO_LIST
       then 'Del'
-      when SHOW_TODO_REMOVE
+      when SHOW_TODO_REMOVE, SHOW_TODO_INFO
       then 'Back'
       else return # TODO throw
 
-  _rightButtonText: (VisibilityTodoRemove) ->
-    switch VisibilityTodoRemove
+  _rightButtonText: (VisibilityContainer) ->
+    switch VisibilityContainer
       when SHOW_TODO_LIST
       then 'Add'
       when SHOW_TODO_REMOVE
       then 'All'
+      when SHOW_TODO_INFO
+      then 'Edit'
       else return # TODO throw
 
   constructor: (props, state) ->
-    { VisibilityTodoRemove } = state
+    { VisibilityContainer } = state
     @state =
       state: state
-      leftButtonText: @_leftButtonText VisibilityTodoRemove
-      rightButtonText: @_rightButtonText VisibilityTodoRemove
+      leftButtonText: @_leftButtonText VisibilityContainer
+      rightButtonText: @_rightButtonText VisibilityContainer
     @
-
-  toggleDelAction: ->
-    { VisibilityTodoRemove } = @state.state
-    { setVisibilityTodoRemove } = @props.actions
-    switch VisibilityTodoRemove
-      when SHOW_TODO_LIST
-      then setVisibilityTodoRemove SHOW_TODO_REMOVE
-      when SHOW_TODO_REMOVE
-      then setVisibilityTodoRemove SHOW_TODO_LIST
-      else return # TODO throw
 
   componentWillReceiveProps: (nextProps) ->
     currentState = @state.state
     nextState = nextProps.state
     if (
-      nextState.VisibilityTodoRemove isnt currentState.VisibilityTodoRemove or
+      nextState.VisibilityContainer isnt currentState.VisibilityContainer or
       nextState.VisibilityAllToRemove isnt currentState.VisibilityAllToRemove
     )
       @setState
         state: nextProps.state
-        leftButtonText: @_leftButtonText nextState.VisibilityTodoRemove
-        rightButtonText: @_rightButtonText nextState.VisibilityTodoRemove
+        leftButtonText: @_leftButtonText nextState.VisibilityContainer
+        rightButtonText: @_rightButtonText nextState.VisibilityContainer
+
+  newTodo: ->
+    { setVisibilityContainer } = @props.actions
+    setVisibilityContainer SHOW_TODO_INFO
 
   toggleSelectAllToRemove: ->
     { setVisibilityAllToRemove } = @props.actions
@@ -108,40 +105,72 @@ TitleBar = cfx
       then setVisibilityAllToRemove CANCEL_ALL_TO_REMOVE
       else return # TODO throw
 
+  toggleDelAction: ->
+    { VisibilityContainer } = @state.state
+    { setVisibilityContainer } = @props.actions
+    switch VisibilityContainer
+      when SHOW_TODO_LIST
+      then setVisibilityContainer SHOW_TODO_REMOVE
+      when SHOW_TODO_REMOVE
+      then setVisibilityContainer SHOW_TODO_LIST
+      else return # TODO throw
+
+  handleLeftButton: ->
+    { VisibilityContainer } = @state.state
+    { setVisibilityContainer } = @props.actions
+    switch VisibilityContainer
+      when SHOW_TODO_LIST, SHOW_TODO_REMOVE
+      then @toggleDelAction()
+      when SHOW_TODO_INFO
+      then setVisibilityContainer SHOW_TODO_LIST
+      else return # TODO throw
+
   handleRightButton: ->
-    if @state.state.VisibilityTodoRemove is SHOW_TODO_REMOVE
-      @toggleSelectAllToRemove.call @
-    # else
+    { VisibilityContainer } = @state.state
+    switch VisibilityContainer
+      when SHOW_TODO_REMOVE
+      then @toggleSelectAllToRemove()
+      when SHOW_TODO_LIST
+      then @newTodo()
+      else return # TODO throw
+
+  _titleText: (VisibilityContainer, VisibilityFilter) ->
+    if VisibilityContainer is SHOW_TODO_INFO
+      'Todo Info'
+    else
+      TitlePrefix = capitalize filterToLocalFilter VisibilityFilter
+      "#{TitlePrefix} Todos"
 
   render: (props, state) ->
-    TitlePrefix = capitalize filterToLocalFilter state.VisibilityFilter
 
     View style: styles.toolbar
     ,
       TouchableOpacity
         style: styles.button
-        onPress: @toggleDelAction
+        onPress: @handleLeftButton
       ,
         Text style: styles.text
         , @state.leftButtonText
     ,
       Text style: styles.title
-      , "#{TitlePrefix} Todos"
+      ,
+        @_titleText state.VisibilityContainer
+        , state.VisibilityFilter
     ,
       TouchableOpacity
         style: styles.button
-        onPress: @handleRightButton.bind @
+        onPress: @handleRightButton
       ,
         Text style: styles.text
         , @state.rightButtonText
 
 module.exports = connect(
   (state) ->
-    VisibilityTodoRemove: state.todoApp.VisibilityTodoRemove
+    VisibilityContainer: state.todoApp.VisibilityContainer
     VisibilityAllToRemove: state.todoApp.VisibilityAllToRemove
     VisibilityFilter: state.todoApp.VisibilityFilter
   {
-    setVisibilityTodoRemove
+    setVisibilityContainer
     setVisibilityAllToRemove
   }
   TitleBar

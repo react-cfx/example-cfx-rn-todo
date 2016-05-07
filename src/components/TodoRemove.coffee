@@ -243,7 +243,7 @@ TodoList = cfx
         Text style: textStyle
         , todo.text
 
-  removeTodos: (todoId) ->
+  removeTodos: ->
     { removeTodoState } = @props.actions
     todos = getVisibleTodos
       visibilityFilter: @state.state.visibilityFilter
@@ -263,7 +263,7 @@ TodoList = cfx
       ,
         TouchableOpacity
           style: styles.button
-          onPress: @removeTodos.bind @, todo.id
+          onPress: @removeTodos.bind @
         ,
           Text style: styles.buttonText
           , 'DELETE'

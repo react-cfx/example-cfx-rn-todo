@@ -6,9 +6,8 @@
 constants = require '../constants/Visibility'
 {
   SET_VISIBILITY_FILTER
-  SET_VISIBILITY_TODO_REMOVE
+  SET_VISIBILITY_CONTAINER
   SET_VISIBILITY_ALL_TO_REMOVE
-  SET_VISIBILITY_ADD_MODAL
 } = constants.types
 
 VisibilityFilter = handleAction(
@@ -21,8 +20,8 @@ VisibilityFilter = handleAction(
     }
 )
 
-VisibilityTodoRemove = handleAction(
-  SET_VISIBILITY_TODO_REMOVE
+VisibilityContainer = handleAction(
+  SET_VISIBILITY_CONTAINER
   next: (state, action) -> action.payload
   throw: (state, action) ->
     throw new Error {
@@ -41,19 +40,8 @@ VisibilityAllToRemove = handleAction(
     }
 )
 
-VisibilityAddModal = handleAction(
-  SET_VISIBILITY_ADD_MODAL
-  next: (state, action) -> action.payload
-  throw: (state, action) ->
-    throw new Error {
-      state
-      action
-    }
-)
-
 module.exports = {
   VisibilityFilter
-  VisibilityTodoRemove
+  VisibilityContainer
   VisibilityAllToRemove
-  VisibilityAddModal
 }

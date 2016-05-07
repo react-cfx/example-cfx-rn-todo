@@ -3,14 +3,12 @@ constants = require '../constants/Visibility'
   SHOW_TODO_ACTIVE
   SHOW_TODO_LIST
   CANCEL_ALL_TO_REMOVE
-  ADD_MODAL_CLOSED
 } = constants.types
 
 initial =
   VisibilityFilter: SHOW_TODO_ACTIVE
-  VisibilityTodoRemove: SHOW_TODO_LIST
+  VisibilityContainer: SHOW_TODO_LIST
   VisibilityAllToRemove: CANCEL_ALL_TO_REMOVE
-  VisibilityAddModal: ADD_MODAL_CLOSED
 
 module.exports = {
   initial

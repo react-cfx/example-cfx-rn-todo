@@ -15,13 +15,14 @@ module.exports = mergeActionsTypes
       'SHOW_TODO_COMPLETED'
     }
 
-  VisibilityTodoRemove: toActionsTypes {
-    'SET_VISIBILITY_TODO_REMOVE'
+  VisibilityContainer: toActionsTypes {
+    'SET_VISIBILITY_CONTAINER'
   }
-  VisibilityTodoRemoveTypes:
+  VisibilityContainerTypes:
     types: {
       'SHOW_TODO_LIST'
       'SHOW_TODO_REMOVE'
+      'SHOW_TODO_INFO'
     }
 
   VisibilityAllToRemove: toActionsTypes {
@@ -31,13 +32,4 @@ module.exports = mergeActionsTypes
     types: {
       'SELECT_ALL_TO_REMOVE'
       'CANCEL_ALL_TO_REMOVE'
-    }
-
-  VisibilityAddModal: toActionsTypes {
-    'SET_VISIBILITY_ADD_MODAL'
-  }
-  VisibilityAddModalTypes:
-    types: {
-      'ADD_MODAL_OPENED'
-      'ADD_MODAL_CLOSED'
     }

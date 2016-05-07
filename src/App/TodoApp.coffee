@@ -1,25 +1,24 @@
 echo = -> console.log arguments
 {
-  RN
   cfx
   cfxify
   Styl
   Comps
   connect
 } = require 'cfx.rn'
-{
-  View
-} = Comps
+{ View } = Comps
 
 TitleBar = require '../components/TitleBar'
 TodoList = require '../components/TodoList'
 TodoRemove = require '../components/TodoRemove'
+TodoInfo = require '../components/TodoInfo'
 Filters = require '../components/Filters'
 
 constants = require '../constants/index'
 {
   SHOW_TODO_LIST
   SHOW_TODO_REMOVE
+  SHOW_TODO_INFO
 } = constants.types
 
 styles = Styl
@@ -38,25 +37,27 @@ styles = Styl
 
 TodoApp = cfx
 
-  _Container: (visibilityTodoRemove) ->
-    switch visibilityTodoRemove
+  _Container: (VisibilityContainer) ->
+    switch VisibilityContainer
       when SHOW_TODO_LIST
       then TodoList
       when SHOW_TODO_REMOVE
       then TodoRemove
+      when SHOW_TODO_INFO
+      then TodoInfo
       else return # TODO throw
 
   constructor: (props, state) ->
     @state =
-      visibilityTodoRemove: state
+      VisibilityContainer: state
       Container: @_Container state
     @
 
   componentWillReceiveProps: (nextProps) ->
 
-    unless @state.visibilityTodoRemove is nextProps.state
+    unless @state.VisibilityContainer is nextProps.state
       @setState
-        visibilityTodoRemove: nextProps.state
+        VisibilityContainer: nextProps.state
         Container: @_Container nextProps.state
 
   render: (props, state) ->
@@ -67,10 +68,11 @@ TodoApp = cfx
     ,
       @state.Container style: styles.list
     ,
-      Filters style: styles.filters
+      unless @state.VisibilityContainer is SHOW_TODO_INFO
+        Filters style: styles.filters
 
 module.exports = connect(
-  (state) -> state.todoApp.VisibilityTodoRemove
+  (state) -> state.todoApp.VisibilityContainer
   {}
   TodoApp
 )
