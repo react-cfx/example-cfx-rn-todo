@@ -2,12 +2,12 @@ echo = -> console.log arguments
 {
   cfx
   cfxify
-  Styl
   Comps
   connect
 } = require 'cfx.rn'
 { View } = Comps
 
+AppBar = require '../components/AppBar'
 TitleBar = require '../components/TitleBar'
 TodoList = require '../components/TodoList'
 TodoRemove = require '../components/TodoRemove'
@@ -20,20 +20,6 @@ constants = require '../constants/index'
   SHOW_TODO_REMOVE
   SHOW_TODO_INFO
 } = constants.types
-
-styles = Styl
-
-  container:
-    flex: 1
-    justifyContent: 'center'
-  title:
-    flex: 1
-  list:
-    flex: 1
-  filters:
-    flex: 1
-  add:
-    flex: 1
 
 TodoApp = cfx
 
@@ -62,14 +48,22 @@ TodoApp = cfx
 
   render: (props, state) ->
 
-    View style: styles.container
+    View style:
+      flex: 1
+      flexDirection: 'column'
     ,
-      TitleBar style: styles.title
+      View {}
+      ,
+        AppBar {}
     ,
-      @state.Container style: styles.list
-    ,
-      unless @state.VisibilityContainer is SHOW_TODO_INFO
-        Filters style: styles.filters
+      View style: flex: 1
+      ,
+        TitleBar {}
+      ,
+        @state.Container {}
+      ,
+        unless @state.VisibilityContainer is SHOW_TODO_INFO
+          Filters {}
 
 module.exports = connect(
   (state) -> state.todoApp.VisibilityContainer

@@ -31,6 +31,7 @@ styles = Styl
     color: '#fff'
     textAlign: 'center'
     fontWeight: 'bold'
+    fontSize: 16
   current:
     backgroundColor: '#70a743'
 

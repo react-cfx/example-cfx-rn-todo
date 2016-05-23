@@ -34,18 +34,6 @@ constants = require '../constants/index'
 
 styles = Styl
 
-  settingbar:
-    backgroundColor: '#81c04d'
-    paddingTop: 30
-    flexDirection: 'row'
-    justifyContent: 'space-between'
-
-  logotext:
-    color: '#fff'
-    fontWeight: 'bold'
-    fontSize: 20
-    paddingLeft: 10
-
   toolbar:
     backgroundColor: '#81c04d'
     paddingTop: 10
@@ -158,38 +146,26 @@ TitleBar = cfx
 
   render: (props, state) ->
 
-    View {}
+    View style: styles.toolbar
     ,
-      View style: styles.settingbar
+      TouchableOpacity
+        style: styles.button
+        onPress: @handleLeftButton
       ,
-        Text style: styles.logotext
-        , 'Todos App'
-      ,
-        TouchableOpacity style: styles.button
-        ,
-          Text style: styles.text
-          , 'Settings'
+        Text style: styles.text
+        , @state.leftButtonText
     ,
-      View style: styles.toolbar
+      Text style: styles.title
       ,
-        TouchableOpacity
-          style: styles.button
-          onPress: @handleLeftButton
-        ,
-          Text style: styles.text
-          , @state.leftButtonText
+        @_titleText state.VisibilityContainer
+        , state.VisibilityFilter
+    ,
+      TouchableOpacity
+        style: styles.button
+        onPress: @handleRightButton
       ,
-        Text style: styles.title
-        ,
-          @_titleText state.VisibilityContainer
-          , state.VisibilityFilter
-      ,
-        TouchableOpacity
-          style: styles.button
-          onPress: @handleRightButton
-        ,
-          Text style: styles.text
-          , @state.rightButtonText
+        Text style: styles.text
+        , @state.rightButtonText
 
 module.exports = connect(
   (state) ->
