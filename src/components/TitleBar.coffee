@@ -34,19 +34,34 @@ constants = require '../constants/index'
 
 styles = Styl
 
-  toolbar:
+  settingbar:
     backgroundColor: '#81c04d'
     paddingTop: 30
+    flexDirection: 'row'
+    justifyContent: 'space-between'
+
+  logotext:
+    color: '#fff'
+    fontWeight: 'bold'
+    fontSize: 20
+    paddingLeft: 10
+
+  toolbar:
+    backgroundColor: '#81c04d'
+    paddingTop: 10
     paddingBottom: 10
     flexDirection: 'row'
+
   title:
     flex: 1
     color: '#fff'
+    fontSize: 16
     textAlign: 'center'
     fontWeight: 'bold'
 
   button:
-    width: 50
+    width: 80
+
   text:
     color: '#fff'
     textAlign: 'center'
@@ -143,26 +158,38 @@ TitleBar = cfx
 
   render: (props, state) ->
 
-    View style: styles.toolbar
+    View {}
     ,
-      TouchableOpacity
-        style: styles.button
-        onPress: @handleLeftButton
+      View style: styles.settingbar
       ,
-        Text style: styles.text
-        , @state.leftButtonText
+        Text style: styles.logotext
+        , 'Todos App'
+      ,
+        TouchableOpacity style: styles.button
+        ,
+          Text style: styles.text
+          , 'Settings'
     ,
-      Text style: styles.title
+      View style: styles.toolbar
       ,
-        @_titleText state.VisibilityContainer
-        , state.VisibilityFilter
-    ,
-      TouchableOpacity
-        style: styles.button
-        onPress: @handleRightButton
+        TouchableOpacity
+          style: styles.button
+          onPress: @handleLeftButton
+        ,
+          Text style: styles.text
+          , @state.leftButtonText
       ,
-        Text style: styles.text
-        , @state.rightButtonText
+        Text style: styles.title
+        ,
+          @_titleText state.VisibilityContainer
+          , state.VisibilityFilter
+      ,
+        TouchableOpacity
+          style: styles.button
+          onPress: @handleRightButton
+        ,
+          Text style: styles.text
+          , @state.rightButtonText
 
 module.exports = connect(
   (state) ->
