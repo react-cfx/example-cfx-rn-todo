@@ -46,10 +46,19 @@ styles = Styl
 
 AppBar = cfx
 
+  _getSettingsText: (text) ->
+    switch text
+      when SETTINGS_OPENED
+      then 'Close'
+      when SETTINGS_CLOSEED
+      then 'Settings'
+      else return # TODO throw
+
   constructor: (props, state) ->
     { VisibilitySettings } = state
     @state = {
       VisibilitySettings
+      SettingsText: @_getSettingsText VisibilitySettings
     }
     @
 
@@ -70,6 +79,7 @@ AppBar = cfx
     if Settings.next isnt Settings.current
       @setState
         VisibilitySettings: Settings.next
+        SettingsText: @_getSettingsText Settings.next
 
   render: (props, state) ->
 
@@ -83,7 +93,7 @@ AppBar = cfx
         onPress: @toggleSettingsModal
       ,
         Text style: styles.text
-        , 'Settings'
+        , @state.SettingsText
 
 module.exports = connect(
   (state) ->
