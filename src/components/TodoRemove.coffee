@@ -19,13 +19,13 @@ AddTodo = require './AddTodo'
 
 { getVisibleTodos } = require '../selectors/index'
 
-{
-  SHOW_TODO_COMPLETED
-  SELECT_ALL_TO_REMOVE
-  CANCEL_ALL_TO_REMOVE
-} = (
-  require '../constants/Visibility'
-).types
+# {
+#   SHOW_TODO_COMPLETED
+#   SELECT_ALL_TO_REMOVE
+#   CANCEL_ALL_TO_REMOVE
+# } = (
+#   require '../constants/Visibility'
+# ).types
 
 {
   modifyTodoState

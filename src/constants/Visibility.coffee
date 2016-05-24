@@ -15,6 +15,15 @@ module.exports = mergeActionsTypes
       'SHOW_TODO_COMPLETED'
     }
 
+  VisibilitySettings: toActionsTypes {
+    'SET_VISIBILITY_SETTINGS'
+  }
+  VisibilitySettingsTypes:
+    types: {
+      'SETTINGS_OPENED'
+      'SETTINGS_CLOSEED'
+    }
+
   VisibilityContainer: toActionsTypes {
     'SET_VISIBILITY_CONTAINER'
   }

@@ -8,6 +8,7 @@ echo = -> console.log arguments
 { View } = Comps
 
 AppBar = require '../components/AppBar'
+Settings = require '../components/Settings'
 TitleBar = require '../components/TitleBar'
 TodoList = require '../components/TodoList'
 TodoRemove = require '../components/TodoRemove'
@@ -19,6 +20,7 @@ constants = require '../constants/index'
   SHOW_TODO_LIST
   SHOW_TODO_REMOVE
   SHOW_TODO_INFO
+  SETTINGS_OPENED
 } = constants.types
 
 TodoApp = cfx
@@ -35,16 +37,21 @@ TodoApp = cfx
 
   constructor: (props, state) ->
     @state =
-      VisibilityContainer: state
-      Container: @_Container state
+      VisibilityContainer: state.VisibilityContainer
+      Container: @_Container state.VisibilityContainer
+      VisibilitySettings: state.VisibilitySettings
     @
 
   componentWillReceiveProps: (nextProps) ->
 
-    unless @state.VisibilityContainer is nextProps.state
+    unless @state.VisibilityContainer is nextProps.state.VisibilityContainer
       @setState
-        VisibilityContainer: nextProps.state
-        Container: @_Container nextProps.state
+        VisibilityContainer: nextProps.state.VisibilityContainer
+        Container: @_Container nextProps.state.VisibilityContainer
+
+    unless @state.VisibilitySettings is nextProps.state.VisibilitySettings
+      @setState
+        VisibilitySettings: nextProps.state.VisibilitySettings
 
   render: (props, state) ->
 
@@ -56,17 +63,26 @@ TodoApp = cfx
       ,
         AppBar {}
     ,
-      View style: flex: 1
-      ,
-        TitleBar {}
-      ,
-        @state.Container {}
-      ,
-        unless @state.VisibilityContainer is SHOW_TODO_INFO
-          Filters {}
+      ( ->
+        if @state.VisibilitySettings is SETTINGS_OPENED
+          View style: flex: 1
+          ,
+            Settings {}
+        else
+          View style: flex: 1
+          ,
+            TitleBar {}
+          ,
+            @state.Container {}
+          ,
+            unless @state.VisibilityContainer is SHOW_TODO_INFO
+              Filters {}
+      ).call @
 
 module.exports = connect(
-  (state) -> state.todoApp.VisibilityContainer
+  (state) ->
+    VisibilityContainer: state.todoApp.VisibilityContainer
+    VisibilitySettings: state.todoApp.VisibilitySettings
   {}
   TodoApp
 )
